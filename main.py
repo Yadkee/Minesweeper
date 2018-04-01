@@ -7,9 +7,10 @@ from os.path import (
     join,
     exists)
 from json import load
+from re import match
 
 basicConfig(format="%(asctime)s [%(levelname)s] %(name)s - %(message)s")
-logger = getLogger("Minesweeper")
+logger = getLogger("main")
 logger.setLevel(DEBUG)
 
 
@@ -24,7 +25,13 @@ def prepare():
         show_error("There is no media folder!")
     # Load multiplicator factor from config.json
     with open("config.json") as f:
-        factor = int(load(f)["factor"])  # I'm not acepting floats
+        loaded = load(f)
+        factor = int(loaded["factor"])  # I'm not acepting floats
+        difficultyIndex = str(loaded["difficulty"])
+        difficulty = loaded[difficultyIndex]
+    if not match(r"\d+x\d+ \d+ mines", difficulty):
+        show_error("\nThe selected difficulty is not in the proper format:"
+                   "\n\t[Width]x[Height] [number] mines")
     folderPath = join("cache", str(factor))
     # Create cache for this factor
     if not exists(folderPath):
@@ -55,8 +62,8 @@ def prepare():
             from generate_images import generate_images
             generate_images(factor)
             logger.info("Cached images for a factor of %d" % factor)
-    return factor
+    return factor, difficulty
 
 if __name__ == "__main__":
-    factor = prepare()
-    # Launch the game with the factor parameter
+    from game import run_game
+    run_game(*prepare())
