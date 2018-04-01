@@ -1,1 +1,6 @@
-{"factor": 1}
+{"factor": 1,
+ "difficulty": 1,
+ "1": "9x9 10 mines",
+ "2": "16x16 40 mines",
+ "3": "30x16 99 mines",
+ "4": "[EDIT ME] CUSTOM: feel free to use your favourite configuration"}
