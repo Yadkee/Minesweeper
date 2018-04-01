@@ -26,7 +26,7 @@ def prepare():
     # Load multiplicator factor from config.json
     with open("config.json") as f:
         loaded = load(f)
-        factor = int(loaded["factor"])  # I'm not acepting floats
+        factor = int(loaded["resizeFactor"])  # I'm not acepting floats
         difficultyIndex = str(loaded["difficulty"])
         difficulty = loaded[difficultyIndex]
     if not match(r"\d+x\d+ \d+ mines", difficulty):
