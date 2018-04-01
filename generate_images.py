@@ -1,4 +1,5 @@
 #! python3
+"""This script splits sprites.gif into 3 animated gifs"""
 from os.path import join
 from PIL import Image
 SPRITES_PATH = join("media", "sprites.gif")
@@ -7,6 +8,7 @@ SPR = Image.open(SPRITES_PATH)
 
 
 def generate_images(factor=1):
+    """Every image will be resized by a factor of 'factor'"""
     groups = ([], [], [])
     names = ("cell", "number", "face")
     indexes = (0, 0, 1, 2)
