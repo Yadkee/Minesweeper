@@ -3,14 +3,14 @@
 from os.path import join
 from PIL import Image
 SPRITES_PATH = join("media", "sprites.gif")
-CACHE_PATH = join("cache", "")
 SPR = Image.open(SPRITES_PATH)
+NAMES = ("cell.gif", "number.gif", "face.gif")
 
 
 def generate_images(factor=1):
     """Every image will be resized by a factor of 'factor'"""
+    filePath = join("cache", str(factor), "")
     groups = ([], [], [])
-    names = ("cell", "number", "face")
     indexes = (0, 0, 1, 2)
     limits = ((0, 0, 144, 16, 16, 16), (0, 16, 96, 32, 16, 16),
               (0, 32, 128, 55, 13, 23), (0, 55, 128, 78, 26, 26))
@@ -24,10 +24,10 @@ def generate_images(factor=1):
                 else:
                     resized = cropped
                 groups[a].append(resized)
-    for name, group in zip(names, groups):
+    for name, group in zip(NAMES, groups):
         n = name == "number"  # There is a weird transparency error in number
         img = group[0 - 2 * n]
-        with open(CACHE_PATH + name + ".gif", "wb") as f:
+        with open(filePath + name, "wb") as f:
             img.save(f, save_all=True, append_images=group[1 - n:])
 
 if __name__ == "__main__":
