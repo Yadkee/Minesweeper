@@ -30,8 +30,14 @@ def generate_images(factor=1):
                 images.append(resized)
                 a += 1
     for name, img in zip(NAMES, images):
-        with open(filePath + name + ".gif", "wb") as f:
-            img.save(f)
+        img.save(filePath + name + ".gif")
+    # Do the same for the menu image
+    menuPath = join("media", "menu.gif")
+    img = Image.open(menuPath)
+    w, h = img.size
+    newSize = (int(w * factor), int(h * factor))
+    resized = img.resize(newSize)
+    resized.save(filePath + "menu.gif")
 
 if __name__ == "__main__":
     generate_images()

@@ -65,6 +65,8 @@ def prepare():
             destPath = join(folderPath, "")
             for name in names:
                 copyfile(sourcePath + name + ".gif", destPath + name + ".gif")
+            menuPath = join("media", "menu.gif")
+            copyfile(menuPath, destPath + "menu.gif")
             logger.info("Cached images from default")
     return factor, difficulty
 

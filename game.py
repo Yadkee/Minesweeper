@@ -92,7 +92,8 @@ class App(tk.Frame):
         self.bottomFrame = tk.Frame(self, bd=3 * f, relief="sunken",
                                     height=16 * f)
 
-        self.button = tk.Label(self.topFrame, bd=0, width=26, height=26)
+        self.button = tk.Label(self.topFrame, bd=0,
+                               width=26 * f, height=26 * f)
         self.mineCounter = [tk.Label(self.mineFrame, bd=0) for _ in range(3)]
         self.timeCounter = [tk.Label(self.timeFrame, bd=0) for _ in range(3)]
         self.cells = [tk.Label(self.bottomFrame, bd=0)
@@ -291,20 +292,25 @@ def run_game(factor, difficulty):
     root.resizable(0, 0)
     root.iconbitmap(default=join("media", "icon.ico"))
     rootSize = ((mapSize[0] * 16 + 6 + 6 + 5 + 3) * factor,
-                (mapSize[1] * 16 + 6 + 49 + 5 + 4) * factor + 19)
+                (mapSize[1] * 16 + 6 + 49 + 5 + 4 + 19) * factor)
     x = y = 0
     geometry = "%dx%d+%d+%d" % (*rootSize, x, y)
     root.geometry(geometry)
     root.columnconfigure(0, weight=1)
     root.rowconfigure(1, weight=1)
-    menu = tk.Frame(root, bg="#ece9d8", height=19)
-    menuImage = tk.PhotoImage(file=join("media", "menu.gif"))
+    # Menu
+    menu = tk.Frame(root, bg="#ece9d8", height=19 * factor)
+    folderPath = join("cache", str(factor), "")
+    menuImage = tk.PhotoImage(file=folderPath + "menu.gif")
     menuLabel = tk.Label(menu, image=menuImage, bg="#ece9d8")
+    # App
     app = App(root, factor, mapSize, nMines)
-    app.config(bg="gray76", bd=0, height=rootSize[1] - 19)
+    app.config(bg="gray76", bd=0)
+    # Grid
     menu.grid(column=0, row=0, sticky="NSEW")
     menuLabel.grid(column=0, row=0, sticky="NSW")
     app.grid(column=0, row=1, padx=(3, 0), pady=(4, 0))
+
     root.mainloop()
 
 if __name__ == "__main__":
