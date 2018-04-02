@@ -2,7 +2,9 @@
 ### Screenshots:
 Can you spot the differences?
 
-![original](/screenshots/original.png) vs ![mine](/screenshots/mine.png)
+|Windows XP|Tkinter|
+|----------|-------|
+|![original](/screenshots/original.png)|![mine](/screenshots/mine.png)|
 ### Dependencies
 - Python 3
 - Tkinter (normally already installed with python 3)
