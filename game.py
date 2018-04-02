@@ -8,9 +8,22 @@ from generate_images import NAMES as IMAGE_NAMES
 from threading import Thread
 from operator import mul
 from itertools import count
+from time import time as get_time
+from functools import partial
+from random import randrange
 
 logger = getLogger("game")
 logger.setLevel(DEBUG)
+
+
+def _near(cell, size, included=False):
+    width, height = size
+    row = cell // width
+    col = cell % width
+    zip1 = list(zip((-width, 0, width), (row, 1, row < height - 1)))
+    zip2 = list(zip((-1, 0, 1), (col, 1, col < height - 1)))
+    return set(cell + v + h for v, c1 in zip1 if c1
+               for h, c2 in zip2 if c2 and v | h | included)
 
 
 class App(tk.Frame):
@@ -22,6 +35,7 @@ class App(tk.Frame):
         self.load_images()
         self.create_widgets()
         self.new()
+        self.near = partial(_near, size=self.mapSize)
 
     def new(self):
         for cell in self.cells:
@@ -30,6 +44,19 @@ class App(tk.Frame):
         for i in range(3):
             self.mineCounter[i].config(image=self.images["n0"])
             self.timeCounter[i].config(image=self.images["n0"])
+        self.playing = None  # True if playing, False if lost
+        self.shown = set()
+        self.flagged = set()
+        self.interrogated = set()
+        self.temporal = set()
+
+    def start(self, cell):
+        self.generate(cell)
+        self.playing = True
+        self.initialTime = get_time()
+        return  # REMOVE ME
+        self.root.after(1000, self.update_time)
+        self.update_mines()
 
     def create_widgets(self):
         f = self.factor
@@ -69,6 +96,120 @@ class App(tk.Frame):
         for w in range(width):
             for h in range(height):
                 self.cells[w + width * h].grid(column=w, row=h)
+        # EVENTS
+        self.bind_class("Label", "<ButtonPress-1>", self.lpress)
+        self.bind_class("Label", "<ButtonPress-2>", self.mpress)
+        self.bind_class("Label", "<ButtonPress-3>", self.rpress)
+        self.bind_class("Label", "<B1-Motion>", self.lpress)
+        self.bind_class("Label", "<B2-Motion>", self.mpress)
+        self.bind_class("Label", "<ButtonRelease-1>", self.lrelease)
+        self.bind_class("Label", "<ButtonRelease-2>", self.mrelease)
+
+    def lpress(self, event):
+        if self.playing is False:
+            return
+        self.clean_temporal()
+        widget = self.winfo_containing(event.x_root, event.y_root)
+        try:
+            cell = self.cells.index(widget)
+        except ValueError:
+            if widget is self.button:
+                self.button.config(image=self.images["clicked"])
+        else:
+            if not (cell in self.shown or cell in self.flagged):
+                self.cells[cell].config(image=self.images["0"])
+                self.temporal.add(cell)
+                self.button.config(image=self.images["undecise"])
+
+    def mpress(self, event):
+        if self.playing is False:
+            return
+        self.clean_temporal()
+        widget = self.winfo_containing(event.x_root, event.y_root)
+        try:
+            cell = self.cells.index(widget)
+        except ValueError:
+            pass
+        else:
+            for c in self.near(cell, included=True):
+                if not (c in self.shown or c in self.flagged):
+                    self.cells[c].config(image=self.images["0"])
+                    self.temporal.add(c)
+            self.button.config(image=self.images["undecise"])
+
+    def rpress(self, event):
+        print(event.widget)
+
+    def lrelease(self, event):
+        self.clean_temporal()
+        widget = self.winfo_containing(event.x_root, event.y_root)
+        if widget is not event.widget:
+            return
+        try:
+            cell = self.cells.index(widget)
+        except ValueError:
+            if widget is self.button:
+                self.new()
+        else:
+            if self.playing is False or cell in self.shown:
+                return
+            if self.playing is None:
+                self.start(cell)
+            else:
+                self.show(cell)
+
+    def mrelease(self, event):
+        print(event.widget)
+
+    def show(self, cell):
+        if cell in self.shown or cell in self.flagged:
+            return
+        self.shown.add(cell)
+        cellType = self.map[cell]
+        if cellType == 9:
+            for a, c in enumerate(self.map):
+                if c == 9:
+                    if a == cell:
+                        self.cells[a].config(image=self.images["r"])
+                    elif a not in self.flagged:
+                        self.cells[a].config(image=self.images["b"])
+                elif a in self.flagged:
+                    self.cells[a].config(image=self.images["c"])
+            self.button.config(image=self.images["sad"])
+            self.playing = False
+            return
+        self.cells[cell].config(image=self.images[str(cellType)])
+        if mul(*self.mapSize) - len(self.shown) == self.nMines:
+            self.button.config(image=self.images["cool"])
+            self.playing = False
+        if cellType == 0:
+            [self.show(c) for c in self.near(cell)]
+
+    def generate(self, cell):
+        length = mul(*self.mapSize)
+        self.map = [0] * length
+        nMines = 0
+        near = self.near(cell, included=True)
+        while nMines < self.nMines:
+            rCell = randrange(0, length)  # Choosing mine cells
+            if self.map[rCell] != 9 and rCell not in near:
+                self.map[rCell] = 9
+                nMines += 1
+                for c in self.near(rCell):
+                    if self.map[c] == 9:
+                        continue
+                    self.map[c] += 1  # Near cells must count this mine
+        self.show(cell)
+
+    def clean_temporal(self):
+        for cell in self.temporal:
+            if cell in self.interrogated:
+                self.cells[cell].config(image=self.images["i"])
+            else:
+                self.cells[cell].config(image=self.images["_"])
+        self.temporal.clear()
+        if self.playing is not False:
+            self.button.config(image=self.images["happy"])
 
     def load_images(self):
         self.images = {}
