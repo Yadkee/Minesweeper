@@ -54,8 +54,6 @@ class App(tk.Frame):
             self.timeCounter[a].config(image=self.images["n" + i])
 
     def update_mines(self):
-        if self.playing is None:
-            return
         mines = self.nMines - len(self.flagged)
         stringMines = str(min(mines, 999)).rjust(3, "0")
         for a, i in enumerate(stringMines):
@@ -66,20 +64,19 @@ class App(tk.Frame):
             cell.config(image=self.images["_"])
         self.button.config(image=self.images["happy"])
         for i in range(3):
-            self.mineCounter[i].config(image=self.images["n0"])
             self.timeCounter[i].config(image=self.images["n0"])
         self.playing = None  # True if playing, False if lost
         self.shown = set()
         self.flagged = set()
         self.interrogated = set()
         self.temporal = set()
+        self.update_mines()
 
     def start(self, cell):
         self.generate(cell)
         self.playing = True
         self.initialTime = get_time()
         timer(self.update_time, 1000)
-        self.update_mines()
 
     def create_widgets(self):
         f = self.factor
