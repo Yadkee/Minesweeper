@@ -132,7 +132,7 @@ class App(tk.Frame):
         if self.playing is False:
             return
         self.clean_temporal()
-        widget = event.widget
+        widget = self.winfo_containing(event.x_root, event.y_root)
         try:
             cell = self.cells.index(widget)
         except ValueError:
@@ -148,7 +148,7 @@ class App(tk.Frame):
         if self.playing is False:
             return
         self.clean_temporal()
-        widget = event.widget
+        widget = self.winfo_containing(event.x_root, event.y_root)
         try:
             cell = self.cells.index(widget)
         except ValueError:
@@ -202,7 +202,7 @@ class App(tk.Frame):
     def mrelease(self, event):
         self.clean_temporal()
         widget = self.winfo_containing(event.x_root, event.y_root)
-        if widget is not event.widget:
+        if widget is not event.widget or self.playing is None:
             return
         try:
             cell = self.cells.index(widget)
