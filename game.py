@@ -9,6 +9,7 @@ from threading import Thread
 from operator import mul
 from itertools import count
 from time import time as get_time
+from time import sleep
 from functools import partial
 from random import randrange
 
@@ -26,6 +27,13 @@ def _near(cell, size, included=False):
                for h, c2 in zip2 if c2 and v | h | included)
 
 
+def timer(callback, miliseconds):
+    def w():
+        while not callback():
+            sleep(miliseconds / 1000)
+    Thread(target=w, daemon=True).start()
+
+
 class App(tk.Frame):
     def __init__(self, master, factor, mapSize, nMines):
         tk.Frame.__init__(self, master, relief="flat", border=5)
@@ -36,6 +44,22 @@ class App(tk.Frame):
         self.create_widgets()
         self.new()
         self.near = partial(_near, size=self.mapSize)
+
+    def update_time(self):
+        if not self.playing:
+            return True
+        actualTime = int(get_time() - self.initialTime)
+        stringTime = str(min(actualTime, 999)).rjust(3, "0")
+        for a, i in enumerate(stringTime):
+            self.timeCounter[a].config(image=self.images["n" + i])
+
+    def update_mines(self):
+        if self.playing is None:
+            return
+        mines = self.nMines - len(self.flagged)
+        stringMines = str(min(mines, 999)).rjust(3, "0")
+        for a, i in enumerate(stringMines):
+            self.mineCounter[a].config(image=self.images["n" + i])
 
     def new(self):
         for cell in self.cells:
@@ -54,8 +78,7 @@ class App(tk.Frame):
         self.generate(cell)
         self.playing = True
         self.initialTime = get_time()
-        return  # REMOVE ME
-        self.root.after(1000, self.update_time)
+        timer(self.update_time, 1000)
         self.update_mines()
 
     def create_widgets(self):
@@ -156,7 +179,6 @@ class App(tk.Frame):
                       self.nMines > len(self.flagged)):
                     event.widget.config(image=self.images["f"])
                     self.flagged.add(cell)
-            return  # DELETE ME PLS
             self.update_mines()
 
     def lrelease(self, event):
