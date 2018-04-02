@@ -36,7 +36,7 @@ def timer(callback, miliseconds):
 
 class App(tk.Frame):
     def __init__(self, master, factor, mapSize, nMines):
-        tk.Frame.__init__(self, master, relief="flat", border=5)
+        tk.Frame.__init__(self, master, relief="flat")
         self.factor = factor
         self.mapSize = mapSize
         self.nMines = nMines
