@@ -16,5 +16,5 @@ Just run `main.py` or `game.py`
 
 Remember that to change the configuration you have to edit `config.json`.
 
-(Menus are just an ilusion)
+(Menus are just an illusion, clicking on them does nothing)
 ## Enjoy!
