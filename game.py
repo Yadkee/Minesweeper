@@ -82,8 +82,9 @@ class App(tk.Frame):
         f = self.factor
         width, height = self.mapSize
         # CREATION
-        self.superTopFrame = tk.Frame(self, bd=2 * f, relief="sunken")
-        self.topFrame = tk.Frame(self.superTopFrame, bg="gray76", height=23 * f)
+        self.superTopFrame = tk.Frame(self, bd=2 * f, relief="sunken",
+                                      height=33 * f)
+        self.topFrame = tk.Frame(self.superTopFrame, bg="gray76")
         self.mineFrame = tk.Frame(self.topFrame, bd=f, relief="sunken",
                                   width=39 * f, height=13 * f)
         self.timeFrame = tk.Frame(self.topFrame, bd=f, relief="sunken",
@@ -290,15 +291,20 @@ def run_game(factor, difficulty):
     root.resizable(0, 0)
     root.iconbitmap(default=join("media", "icon.ico"))
     rootSize = ((mapSize[0] * 16 + 6 + 6 + 5 + 3) * factor,
-                (mapSize[1] * 16 + 6 + 49 + 5 + 4) * factor)  # +19 (menus)
+                (mapSize[1] * 16 + 6 + 49 + 5 + 4) * factor + 19)
     x = y = 0
     geometry = "%dx%d+%d+%d" % (*rootSize, x, y)
     root.geometry(geometry)
     root.columnconfigure(0, weight=1)
-    root.rowconfigure(0, weight=1)
+    root.rowconfigure(1, weight=1)
+    menu = tk.Frame(root, bg="#ece9d8", height=19)
+    menuImage = tk.PhotoImage(file=join("media", "menu.gif"))
+    menuLabel = tk.Label(menu, image=menuImage, bg="#ece9d8")
     app = App(root, factor, mapSize, nMines)
-    app.config(bg="gray76", bd=0)
-    app.grid(column=0, row=0, padx=(3, 0), pady=(4, 0))
+    app.config(bg="gray76", bd=0, height=rootSize[1] - 19)
+    menu.grid(column=0, row=0, sticky="NSEW")
+    menuLabel.grid(column=0, row=0, sticky="NSW")
+    app.grid(column=0, row=1, padx=(3, 0), pady=(4, 0))
     root.mainloop()
 
 if __name__ == "__main__":
