@@ -109,7 +109,7 @@ class App(tk.Frame):
         if self.playing is False:
             return
         self.clean_temporal()
-        widget = self.winfo_containing(event.x_root, event.y_root)
+        widget = event.widget
         try:
             cell = self.cells.index(widget)
         except ValueError:
@@ -125,7 +125,7 @@ class App(tk.Frame):
         if self.playing is False:
             return
         self.clean_temporal()
-        widget = self.winfo_containing(event.x_root, event.y_root)
+        widget = event.widget
         try:
             cell = self.cells.index(widget)
         except ValueError:
@@ -138,7 +138,26 @@ class App(tk.Frame):
             self.button.config(image=self.images["undecise"])
 
     def rpress(self, event):
-        print(event.widget)
+        widget = event.widget
+        try:
+            cell = self.cells.index(widget)
+        except ValueError:
+            pass
+        else:
+            if self.playing:
+                if cell in self.flagged:
+                    widget.config(image=self.images["i"])
+                    self.flagged.remove(cell)
+                    self.interrogated.add(cell)
+                elif cell in self.interrogated:
+                    widget.config(image=self.images["_"])
+                    self.interrogated.remove(cell)
+                elif (cell not in self.shown and
+                      self.nMines > len(self.flagged)):
+                    event.widget.config(image=self.images["f"])
+                    self.flagged.add(cell)
+            return  # DELETE ME PLS
+            self.update_mines()
 
     def lrelease(self, event):
         self.clean_temporal()
@@ -159,7 +178,20 @@ class App(tk.Frame):
                 self.show(cell)
 
     def mrelease(self, event):
-        print(event.widget)
+        self.clean_temporal()
+        widget = self.winfo_containing(event.x_root, event.y_root)
+        if widget is not event.widget:
+            return
+        try:
+            cell = self.cells.index(widget)
+        except ValueError:
+            pass
+        else:
+            cellType = self.map[cell]
+            if 0 < cellType < 9 and cell in self.shown:
+                near = self.near(cell)
+                if cellType == sum(1 for c in near if c in self.flagged):
+                    [self.show(c) for c in near]
 
     def show(self, cell):
         if cell in self.shown or cell in self.flagged:
