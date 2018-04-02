@@ -87,8 +87,8 @@ class App(tk.Frame):
         # CREATION
         self.superTopFrame = tk.Frame(self, bd=2 * f, relief="sunken")
         self.topFrame = tk.Frame(self.superTopFrame, bg="gray76", pady=3 * f)
-        self.mineFrame = tk.Frame(self.topFrame)
-        self.timeFrame = tk.Frame(self.topFrame)
+        self.mineFrame = tk.Frame(self.topFrame, bd=f, relief="sunken")
+        self.timeFrame = tk.Frame(self.topFrame, bd=f, relief="sunken")
         self.bottomFrame = tk.Frame(self, bd=3 * f, relief="sunken")
 
         self.button = tk.Label(self.topFrame, bd=0)
