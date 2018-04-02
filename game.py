@@ -302,7 +302,7 @@ def run_game(factor, difficulty):
     menu = tk.Frame(root, bg="#ece9d8", height=19 * factor)
     folderPath = join("cache", str(factor), "")
     menuImage = tk.PhotoImage(file=folderPath + "menu.gif")
-    menuLabel = tk.Label(menu, image=menuImage, bg="#ece9d8")
+    menuLabel = tk.Label(menu, image=menuImage, bg="#ece9d8", bd=0)
     # App
     app = App(root, factor, mapSize, nMines)
     app.config(bg="gray76", bd=0)
