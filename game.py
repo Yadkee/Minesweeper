@@ -83,12 +83,15 @@ class App(tk.Frame):
         width, height = self.mapSize
         # CREATION
         self.superTopFrame = tk.Frame(self, bd=2 * f, relief="sunken")
-        self.topFrame = tk.Frame(self.superTopFrame, bg="gray76", pady=3 * f)
-        self.mineFrame = tk.Frame(self.topFrame, bd=f, relief="sunken")
-        self.timeFrame = tk.Frame(self.topFrame, bd=f, relief="sunken")
-        self.bottomFrame = tk.Frame(self, bd=3 * f, relief="sunken")
+        self.topFrame = tk.Frame(self.superTopFrame, bg="gray76", height=23 * f)
+        self.mineFrame = tk.Frame(self.topFrame, bd=f, relief="sunken",
+                                  width=39 * f, height=13 * f)
+        self.timeFrame = tk.Frame(self.topFrame, bd=f, relief="sunken",
+                                  width=39 * f, height=13 * f)
+        self.bottomFrame = tk.Frame(self, bd=3 * f, relief="sunken",
+                                    height=16 * f)
 
-        self.button = tk.Label(self.topFrame, bd=0)
+        self.button = tk.Label(self.topFrame, bd=0, width=26, height=26)
         self.mineCounter = [tk.Label(self.mineFrame, bd=0) for _ in range(3)]
         self.timeCounter = [tk.Label(self.timeFrame, bd=0) for _ in range(3)]
         self.cells = [tk.Label(self.bottomFrame, bd=0)
@@ -103,16 +106,19 @@ class App(tk.Frame):
         [self.rowconfigure(i, weight=1) for i in range(2)]
         # GRID
         self.superTopFrame.grid(column=0, row=0, sticky="NEW",
-                                padx=5 * f, pady=5 * f)
+                                padx=(6 * f, 5 * f), pady=6 * f)
         self.topFrame.pack(expand=True, fill="both")
-        self.button.grid(column=1, row=0)
-        self.mineFrame.grid(column=0, row=0)
-        self.timeFrame.grid(column=2, row=0)
+        self.button.grid(column=1, row=0, padx=(14 * f, 12 * f),
+                         pady=(4 * f, 3 * f))
+        self.mineFrame.grid(column=0, row=0, padx=(5 * f, 0),
+                            pady=(4 * f, 4 * f))
+        self.timeFrame.grid(column=2, row=0, padx=(0, 7 * f),
+                            pady=(4 * f, 4 * f))
         for i in range(3):
             self.mineCounter[i].grid(column=i, row=0)
             self.timeCounter[i].grid(column=i, row=0)
         self.bottomFrame.grid(column=0, row=1, sticky="NEW",
-                              padx=5 * f, pady=5 * f)
+                              padx=(6 * f, 5 * f), pady=(0, 5 * f))
         for w in range(width):
             for h in range(height):
                 self.cells[w + width * h].grid(column=w, row=h)
@@ -280,11 +286,11 @@ def run_game(factor, difficulty):
 
     root = tk.Tk()
     root.title("Minesweeper")
-    root.config(bg="gray76")
+    root.config(bg="white")
     root.resizable(0, 0)
     root.iconbitmap(default=join("media", "icon.ico"))
-    rootSize = ((mapSize[0] * 16 + 16) * factor,
-                (mapSize[1] * 16 + 26 + 36) * factor)
+    rootSize = ((mapSize[0] * 16 + 6 + 6 + 5 + 3) * factor,
+                (mapSize[1] * 16 + 6 + 49 + 5 + 4) * factor)  # +19 (menus)
     x = y = 0
     geometry = "%dx%d+%d+%d" % (*rootSize, x, y)
     root.geometry(geometry)
@@ -292,7 +298,7 @@ def run_game(factor, difficulty):
     root.rowconfigure(0, weight=1)
     app = App(root, factor, mapSize, nMines)
     app.config(bg="gray76", bd=0)
-    app.grid(column=0, row=0)
+    app.grid(column=0, row=0, padx=(3, 0), pady=(4, 0))
     root.mainloop()
 
 if __name__ == "__main__":
