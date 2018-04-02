@@ -276,6 +276,10 @@ def run_game(factor, difficulty):
     asTuple = difficulty.split(" ")[:2]
     mapSize = [int(i) for i in asTuple[0].split("x")]
     nMines = int(asTuple[1])
+    length = mul(*mapSize)
+    if nMines >= length - 9:
+        logger.error("There are way too many mines")
+        nMines = max(min(length // 5, length - 9), 1)
 
     root = tk.Tk()
     root.title("Minesweeper")
