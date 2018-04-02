@@ -36,7 +36,7 @@ def timer(callback, miliseconds):
 
 class App(tk.Frame):
     def __init__(self, master, factor, mapSize, nMines):
-        tk.Frame.__init__(self, master, relief="flat")
+        tk.Frame.__init__(self, master, bg="gray76")
         self.factor = factor
         self.mapSize = mapSize
         self.nMines = nMines
@@ -305,11 +305,10 @@ def run_game(factor, difficulty):
     menuLabel = tk.Label(menu, image=menuImage, bg="#ece9d8", bd=0)
     # App
     app = App(root, factor, mapSize, nMines)
-    app.config(bg="gray76", bd=0)
     # Grid
     menu.grid(column=0, row=0, sticky="NSEW")
     menuLabel.grid(column=0, row=0, sticky="NSW")
-    app.grid(column=0, row=1, padx=(3, 0), pady=(4, 0))
+    app.grid(column=0, row=1, padx=(3, 0), pady=(4, 0), sticky="SE")
 
     root.mainloop()
 
