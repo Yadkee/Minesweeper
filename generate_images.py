@@ -19,11 +19,12 @@ def generate_images(factor=1):
     a = 0
     for box in limits:
         w, h = box[4], box[5]
+        newSize = (int(w * factor), int(h * factor))
         for y in range(*box[1::2]):
             for x in range(*box[::2]):
                 cropped = SPR.crop((x, y, x + w, y + h))
                 if factor != 1:
-                    resized = cropped.resize((w * factor, h * factor))
+                    resized = cropped.resize(newSize)
                 else:
                     resized = cropped
                 images.append(resized)
