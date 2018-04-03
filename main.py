@@ -45,12 +45,11 @@ def prepare():
             try:
                 from PIL import Image
             except ImportError:
-                if factor != 1:
-                    logger.warning("You chose a different size but Pillow is "
-                                   "not installed. Default size is going to "
-                                   "be used instead")
-                    factor = 1
-                    folderPath = join("cache", str(factor))
+                logger.warning("You chose a different size but Pillow is "
+                                "not installed. Default size is going to "
+                                "be used instead")
+                factor = 1
+                folderPath = join("cache", str(factor))
             else:  # Generate images
                 mkdir(folderPath)
                 from generate_images import generate_images
