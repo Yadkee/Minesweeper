@@ -4,7 +4,6 @@ from os.path import join
 from PIL import Image
 SPRITES_PATH = join("media", "sprites.gif")
 SPR = Image.open(SPRITES_PATH)
-NAMES = ("cell.gif", "number.gif", "face.gif")
 NAMES = tuple("012345678bcrif_") + ("n0", "n1", "n2", "n3", "n4", "n5", "n6",
                                     "n7", "n8", "n9", "clicked", "happy",
                                     "undecise", "sad", "cool")
