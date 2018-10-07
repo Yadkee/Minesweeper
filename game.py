@@ -13,7 +13,7 @@ from time import sleep
 from functools import partial
 from random import randrange
 
-logger = getLogger("game")
+logger = getLogger("Game")
 logger.setLevel(DEBUG)
 
 
@@ -71,6 +71,7 @@ class App(tk.Frame):
         self.interrogated = set()
         self.temporal = set()
         self.update_mines()
+        logger.info("Starting a new game")
 
     def start(self, cell):
         self.generate(cell)
@@ -236,11 +237,13 @@ class App(tk.Frame):
                     self.cells[a].config(image=self.images["c"])
             self.button.config(image=self.images["sad"])
             self.playing = False
+            logger.info("You have lost")
             return
         self.cells[cell].config(image=self.images[str(cellType)])
         if mul(*self.mapSize) - len(self.shown) == self.nMines:
             self.button.config(image=self.images["cool"])
             self.playing = False
+            logger.info("You won!")
         if cellType == 0:
             [self.show(c) for c in self.near(cell)]
 
@@ -290,7 +293,10 @@ def run_game(factor, difficulty):
     root.title("Minesweeper")
     root.config(bg="white")
     root.resizable(0, 0)
-    root.iconbitmap(default=join("media", "icon.ico"))
+    try:
+        root.iconbitmap(default=join("media", "icon.ico"))
+    except tk.TclError:
+        logger.error("Icon could not be loaded\nYou probably use linux")
     rootSize = ((mapSize[0] * 16 + 6 + 6 + 5 + 3) * factor,
                 (mapSize[1] * 16 + 6 + 49 + 5 + 4 + 19) * factor)
     x = y = 0
